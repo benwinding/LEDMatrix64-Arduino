@@ -51,9 +51,9 @@ SOFTWARE.
 	
 #include "font5x7.h"
 
-#define black  0
-#define top  1
-#define bottom    2
+#define black 0
+#define top 1
+#define bottom 2
 #define both 3
 
 
@@ -65,15 +65,10 @@ class myMATRIX
     volatile byte matrixBufferRed[8*16];   
     volatile byte matrixBufferGreen[8*16];  
 
-    //volatile byte matrixBufferRed[128];// 64*2   
-    //volatile byte matrixBufferGreen[128];// 64*2  
-    //volatile byte matrixBufferRed[192];// 64*3   
-    //volatile byte matrixBufferGreen[192];// 64*3
-
     myMATRIX();
     void Init(uint8_t pinRed, uint8_t pinGreen, uint8_t pinClock, 
-                 uint8_t pinRowA, uint8_t pinRowB, uint8_t pinRowC, uint8_t pinRowD,
-                 uint8_t pinOE, uint8_t pinSTB);
+            uint8_t pinRowA, uint8_t pinRowB, uint8_t pinRowC, uint8_t pinRowD,
+            uint8_t pinOE, uint8_t pinSTB);
 
     void setPixel(uint8_t x ,uint8_t y, uint8_t color);
     void fillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t color);

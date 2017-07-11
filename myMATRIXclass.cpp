@@ -234,11 +234,11 @@ void  __attribute__((optimize("O0"))) myMATRIX::t_shiftOut(uint8_t dataRed,uint8
     else 
       *outRed &= ~bitRed;            
 
-    // val2 = (dataGreen & (1 << (7 - i)));
-    // if (val2)
-    //   *outGreen |= bitGreen;
-    // else 
-    //   *outGreen &= ~bitGreen;
+    val2 = (dataGreen & (1 << (7 - i)));
+    if (val2)
+      *outGreen |= bitGreen;
+    else 
+      *outGreen &= ~bitGreen;
     
     //Clock Pulse
     *outClock |= bitClock; //CLK, HIGH
@@ -265,13 +265,14 @@ void myMATRIX::Show()
 {
   byte row4=row*8;
   *outOE |= bitOE; //OE HIGH => screen OFF
+
   for (int i = 0; i<8; i++)  
   {
     t_shiftOut(~(matrixBufferRed[(row4)+i]),~(matrixBufferGreen[(row4)+i]));
   }
+  *outSTB &= ~bitSTB; //STB LOW 
+  *outSTB |= bitSTB; //STB HIGH ... high to copy shift register's data to output
   rowScan(row);
-  // *outSTB &= ~bitSTB; //STB LOW 
-  *outSTB |= bitSTB; //STB HIGH ... high to copy shift register's data to output 
   *outOE &= ~bitOE; //OE LOW => screen ON
 
   row++;

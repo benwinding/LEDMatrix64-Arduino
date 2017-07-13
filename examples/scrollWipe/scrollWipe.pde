@@ -34,30 +34,16 @@
 // LEDMatrix(a, b, c, d, oe, r1, stb, clk);
 LEDMatrix64 matrix(RowA_Pin, RowB_Pin, RowC_Pin, RowD_Pin, OE_Pin, Red_Pin, Green_Pin, STB_Pin, CLK_Pin);
 
-uint8_t displaybuf[WIDTH * HEIGHT / 8] = {}; // Display Buffer 128 = 64 * 16 / 8
-uint8_t prebuf[PREWIDTH * HEIGHT / 8] = {
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
-};  // Pre buffer (off screen)
-
 void setup()
 {
-  matrix.begin(displaybuf, WIDTH, HEIGHT);
-  matrix.clear();
+  matrix.begin();
+  matrix.reversePreBuf();
 }
 
 void loop()
 {
   matrix.scan();
   ScrollMatrix();
-}
-
-// Get the counter for the numbers
-int getCount() {
-  static uint8_t count = 0;
-  if(count > 9)
-    count = 0;
-  return count++;
 }
 
 // Scroll the matrix accross the screen and pull in from the prebuffer
@@ -67,27 +53,6 @@ void ScrollMatrix() {
   // Run every 100 milliseconds
   if ((millis() - lastCountTime) > 100) {
     lastCountTime = millis();
-    shiftMatrix(displaybuf, prebuf);
-  }
-}
-
-// Shift matrix
-void shiftMatrix(uint8_t *displaybuf, uint8_t *prebuf) {
-  int i,j;
-  uint8_t previousByte;
-  uint8_t currentByte;
-
-  for(i=HEIGHT-1; i>=0; i--) {
-    for(j=7; j>=0; j--) {
-      int byteLocation = i*WIDTH/8 + j;
-      if(j==0) {
-        previousByte = prebuf[i*PREWIDTH/8];
-        prebuf[i*PREWIDTH/8] = previousByte >> 1;
-      }
-      else
-        previousByte = displaybuf[byteLocation-1];
-      currentByte = displaybuf[byteLocation];
-      displaybuf[byteLocation] = (previousByte << 7) | (currentByte >> 1);
-    }
+    matrix.shiftMatrix();
   }
 }

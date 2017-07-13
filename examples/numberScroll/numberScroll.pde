@@ -1,20 +1,3 @@
-/**
- * LED Matrix library for http://www.seeedstudio.com/depot/ultrathin-16x32-red-led-matrix-panel-p-1582.html
- * The LED Matrix panel has 32x16 pixels. Several panel can be combined together as a large screen.
- *
- * Coordinate & Connection (Arduino -> panel 0 -> panel 1 -> ...)
- *   (0, 0)                                     (0, 0)
- *     +--------+--------+--------+               +--------+--------+
- *     |   5    |    4   |    3   |               |    1   |    0   |
- *     |        |        |        |               |        |        |<----- Arduino
- *     +--------+--------+--------+               +--------+--------+
- *     |   2    |    1   |    0   |                              (64, 16)
- *     |        |        |        |<----- Arduino
- *     +--------+--------+--------+
- *                             (96, 32)
- *
- */
-
 #include "LEDMatrix64.h"
 
 #define PREWIDTH  8
@@ -34,9 +17,6 @@
 // LEDMatrix(a, b, c, d, oe, r1, stb, clk);
 LEDMatrix64 matrix(RowA_Pin, RowB_Pin, RowC_Pin, RowD_Pin, OE_Pin, Red_Pin, Green_Pin, STB_Pin, CLK_Pin);
 
-uint8_t displaybuf[WIDTH * HEIGHT / 8] = {}; // Display Buffer 128 = 64 * 16 / 8
-uint8_t prebuf[PREWIDTH * HEIGHT / 8] = {};  // Pre buffer (off screen)
-
 // 16 * 8 digital font
 const uint8_t digitals[] = {
     0x00, 0x1C, 0x36, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x36, 0x1C, 0x00, 0x00, 0x00, 0x00, // 0
@@ -53,7 +33,7 @@ const uint8_t digitals[] = {
 
 void setup()
 {
-  matrix.begin(displaybuf, WIDTH, HEIGHT);
+  matrix.begin();
   matrix.clear();
 }
 
@@ -92,28 +72,7 @@ void ScrollMatrix() {
   // Run every 100 milliseconds
   if ((millis() - lastCountTime) > 100) {
     lastCountTime = millis();
-    shiftMatrix(displaybuf, prebuf);
-  }
-}
-
-// Shift matrix
-void shiftMatrix(uint8_t *displaybuf, uint8_t *prebuf) {
-  int i,j;
-  uint8_t previousByte;
-  uint8_t currentByte;
-
-  for(i=HEIGHT-1; i>=0; i--) {
-    for(j=7; j>=0; j--) {
-      int byteLocation = i*WIDTH/8 + j;
-      if(j==0) {
-        previousByte = prebuf[i*PREWIDTH/8];
-        prebuf[i*PREWIDTH/8] = previousByte >> 1;
-      }
-      else
-        previousByte = displaybuf[byteLocation-1];
-      currentByte = displaybuf[byteLocation];
-      displaybuf[byteLocation] = (previousByte << 7) | (currentByte >> 1);
-    }
+    matrix.shiftMatrix();
   }
 }
 
@@ -123,8 +82,8 @@ void drawDigitalPre(uint16_t x, uint16_t y, uint8_t n)
   if (n > 10) {
     return;
   }
-  
-  uint8_t *pDst = prebuf + y * (PREWIDTH / 8) + x / 8;
+
+  uint8_t *pDst = matrix.prebuf + y * (PREWIDTH / 8) + x / 8;
   const uint8_t *pSrc = digitals + n * 16;
   for (uint8_t i = 0; i < 16; i++) {
     *pDst = *pSrc;

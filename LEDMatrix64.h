@@ -22,10 +22,18 @@
 #ifndef __LED_MATRIX64_H__
 #define __LED_MATRIX64_H__
 
- #include <stdint.h>
+#include <stdint.h>
+
+#define HEIGHT 32
+#define WIDTH 64
+#define PREWIDTH 8
+
 
 class LEDMatrix64 {
 public:
+    uint8_t prebuf[PREWIDTH * HEIGHT / 8] = {};  // Pre buffer (off screen)
+    uint8_t displaybuf1[WIDTH * HEIGHT / 8] = {}; // Display Buffer 128 = 64 * 16 / 8
+
     LEDMatrix64(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t oe, uint8_t r1, uint8_t g1, uint8_t stb, uint8_t clk);
 
     /**
@@ -33,7 +41,7 @@ public:
      * @param displaybuf    display buffer
      * @param number        panels' number
      */
-    void begin(uint8_t *displaybuf, uint16_t width, uint16_t height);
+    void begin();
 
     /**
      * draw a point
@@ -70,6 +78,7 @@ public:
     void scan();
 
     void reverse();
+    void reversePreBuf();
 
     uint8_t isReversed();
 
@@ -77,11 +86,10 @@ public:
 
     void off();
 
+    void shiftMatrix();
+
 private:
     uint8_t clk, r1, g1, stb, oe, a, b, c, d;
-    uint8_t *displaybuf;
-    uint16_t width;
-    uint16_t height;
     uint8_t  mask;
     uint8_t  state;
 };

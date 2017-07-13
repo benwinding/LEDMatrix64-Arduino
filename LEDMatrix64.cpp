@@ -18,14 +18,8 @@
  *  @license    MIT
  */
 
-#include "LEDMatrix64.h"
 #include "Arduino.h"
-
-#if 0
-#define ASSERT(e)   if (!(e)) { Serial.println(#e); while (1); }
-#else
-#define ASSERT(e)
-#endif
+#include "LEDMatrix64.h"
 
 LEDMatrix64::LEDMatrix64(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t oe, uint8_t r1, uint8_t g1, uint8_t stb, uint8_t clk)
 {
@@ -43,15 +37,8 @@ LEDMatrix64::LEDMatrix64(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t oe,
     state = 0;
 }
 
-void LEDMatrix64::begin(uint8_t *displaybuf, uint16_t width, uint16_t height)
+void LEDMatrix64::begin()
 {
-    ASSERT(0 == (width % 32));
-    ASSERT(0 == (height % 16));
-
-    this->displaybuf = displaybuf;
-    this->width = width;
-    this->height = height;
-
     pinMode(a, OUTPUT);
     pinMode(b, OUTPUT);
     pinMode(c, OUTPUT);
@@ -67,10 +54,7 @@ void LEDMatrix64::begin(uint8_t *displaybuf, uint16_t width, uint16_t height)
 
 void LEDMatrix64::drawPoint(uint16_t x, uint16_t y, uint8_t pixel)
 {
-    ASSERT(width > x);
-    ASSERT(height > y);
-
-    uint8_t *byte = displaybuf + x / 8 + y * width / 8;
+    uint8_t *byte = displaybuf1 + x / 8 + y * WIDTH / 8;
     uint8_t  bit = x % 8;
 
     if (pixel) {
@@ -104,9 +88,18 @@ void LEDMatrix64::drawImage(uint16_t xoffset, uint16_t yoffset, uint16_t width, 
 
 void LEDMatrix64::clear()
 {
-    uint8_t *ptr = displaybuf;
-    for (uint16_t i = 0; i < (width * height / 8); i++) {
+    uint8_t *ptr = displaybuf1;
+    for (uint16_t i = 0; i < (WIDTH * HEIGHT / 8); i++) {
         *ptr = 0x00;
+        ptr++;
+    }
+}
+
+void LEDMatrix64::reversePreBuf()
+{
+    uint8_t *ptr = prebuf;
+    for (uint16_t i = 0; i < (PREWIDTH * HEIGHT / 8); i++) {
+        *ptr = 0xFF;
         ptr++;
     }
 }
@@ -129,13 +122,12 @@ void LEDMatrix64::scan()
         return;
     }
 
-    uint8_t *head = displaybuf + row * (width / 8);
+    uint8_t *head = displaybuf1 + row * (WIDTH / 8);
     for (uint8_t line = 0; line < 1; line++) {
         uint8_t *ptr = head;
-        uint8_t *ptr2 = head + width * height/8/2;
-        //head += width * 2;              // width * 16 / 8
+        uint8_t *ptr2 = head + WIDTH * HEIGHT/8/2;
 
-        for (uint8_t byte = 0; byte < (width / 8); byte++) {
+        for (uint8_t byte = 0; byte < (WIDTH / 8); byte++) {
             uint8_t pixels = *ptr;
             uint8_t pixels2 = *ptr2;
             ptr++;
@@ -179,4 +171,27 @@ void LEDMatrix64::off()
 {
     state = 0;
     digitalWrite(oe, HIGH);
+}
+
+
+// Shift matrix
+void LEDMatrix64::shiftMatrix() {
+    int i,j;
+    uint8_t previousByte;
+    uint8_t currentByte;
+
+    for(i=HEIGHT-1; i>=0; i--) {
+        for(j=7; j>=0; j--) {
+            int byteLocation = i*WIDTH/8 + j;
+            if(j==0) {
+                previousByte = prebuf[i*PREWIDTH/8];
+                prebuf[i*PREWIDTH/8] = previousByte >> 1;
+            }
+            else {
+                previousByte = displaybuf1[byteLocation-1];
+            }
+            currentByte = displaybuf1[byteLocation];
+            displaybuf1[byteLocation] = (previousByte << 7) | (currentByte >> 1);
+        }
+    }
 }

@@ -4,18 +4,18 @@
 #define WIDTH   64
 #define HEIGHT  32
 
-#define RowA_Pin 2
-#define RowB_Pin 3
-#define RowC_Pin 4
-#define RowD_Pin 5
-#define OE_Pin 6
-#define Red_Pin 7
-#define Green_Pin 8
-#define CLK_Pin 9
-#define STB_Pin 10
+#define RowA 2
+#define RowB 3
+#define RowC 4
+#define RowD 5
+#define OE 6
+#define Red 7
+#define Green 8
+#define CLK 9
+#define STB 10
 
 // LEDMatrix(a, b, c, d, oe, r1, stb, clk);
-LEDMatrix64 matrix(RowA_Pin, RowB_Pin, RowC_Pin, RowD_Pin, OE_Pin, Red_Pin, Green_Pin, STB_Pin, CLK_Pin);
+LEDMatrix64 matrix(RowA, RowB, RowC, RowD, OE, Red, Green, STB, CLK);
 
 // 16 * 8 digital font
 const uint8_t digitals[] = {

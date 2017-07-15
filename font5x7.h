@@ -30,7 +30,6 @@ SOFTWARE.
 #ifndef FONT5X7_H
 #define FONT5X7_H
 
-//static const uint8_t font5x7[96][7] =
 static const uint8_t font5x7[96][7] PROGMEM =
 {
 {

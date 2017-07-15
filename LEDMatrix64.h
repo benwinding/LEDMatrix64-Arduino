@@ -87,6 +87,7 @@ public:
     void off();
 
     void shiftMatrix();
+    void printCharInBuffer(int x, int y, int ch);
 
 private:
     uint8_t clk, r1, g1, stb, oe, a, b, c, d;

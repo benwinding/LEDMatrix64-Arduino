@@ -21,7 +21,6 @@
 #include "Arduino.h"
 #include "LEDMatrix64.h"
 #include "font5x7.h"
-#include "font8x15.h"
 
 LEDMatrix64::LEDMatrix64(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t oe, uint8_t r1, uint8_t g1, uint8_t stb, uint8_t clk)
 {
@@ -123,7 +122,7 @@ void LEDMatrix64::scan()
   if (!state) {
     return;
   }
-
+  
   uint8_t *head = displaybuf1 + row * (WIDTH / 8);
   for (uint8_t line = 0; line < 1; line++) {
     uint8_t *ptr = head;

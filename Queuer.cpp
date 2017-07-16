@@ -9,22 +9,22 @@ bool Queuer::hasInQueue() {
   return queue.size() > 0;
 }
 
-string Queuer::popQueue() {
-  string a = queue.at(0);
+String Queuer::popQueue() {
+  String a = queue.at(0);
   queue.erase(queue.begin());
   return a;
 }
 
 char Queuer::popQueueChar() {
-  string a = queue.at(0);
-  char b = a.at(0);
-  a.erase(a.begin());
+  String str = queue.at(0);
+  char ch = str.charAt(0);
+  str.remove(0,1);
   queue.erase(queue.begin());
-  if(a.size() > 0)
-    queue.insert(queue.begin(), a);
-  return b;
+  if(str.length() > 0) 
+    queue.insert(queue.begin(), str); 
+  return ch;
 }
 
-void Queuer::push(string val) {
+void Queuer::push(String val) {
   queue.push_back(val);
 }

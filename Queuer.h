@@ -2,9 +2,9 @@
 #ifndef NUMBERQUEUER_H_
 #define NUMBERQUEUER_H_
 
+#include <Arduino.h>
 #include <StandardCplusplus.h>
 #include <vector>
-#include <string>
 
 #define r1 0
 #define r2 8
@@ -18,14 +18,14 @@ class Queuer
 public:
   Queuer(int rowNumber);
   bool hasInQueue();
-  string popQueue();
+  String popQueue();
   char popQueueChar();
-  void push(string val);
+  void push(String val);
 
   int rowNumber;
 
 private:
-  vector<string> queue;
+  vector<String> queue;
 };
 
 #endif

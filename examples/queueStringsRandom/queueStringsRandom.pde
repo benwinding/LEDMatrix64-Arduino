@@ -48,7 +48,18 @@ void AddRandomlyToQueue() {
   if((millis() - lastCountTime) > nextWait) {
     lastCountTime = millis();
     nextWait = random(1000,3000);
-    pushRandomRow("wow!");
+    pushRandomRow(getRandomPhrase());
+  }
+}
+
+string getRandomPhrase() {
+  int row = random(1,6);
+  switch(row) {
+    case  1: return "wow!";
+    case  2: return "epic!";
+    case  3: return "rad!";
+    case  4: return "LOL";
+    default: return "haha";
   }
 }
 
@@ -96,4 +107,3 @@ void ScrollMatrix() {
     matrix.shiftMatrixLeft();
   }
 }
-

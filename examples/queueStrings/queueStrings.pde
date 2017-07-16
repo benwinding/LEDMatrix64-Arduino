@@ -10,11 +10,11 @@
 #define RowB 3
 #define RowC 4
 #define RowD 5
-#define OE 6
-#define Red 7
-#define Green 8
-#define CLK 9
-#define STB 10
+#define STB 6
+#define CLK 7
+#define OE 8
+#define Red 9
+#define Green 10
 
 int SCROLLDELAY = 100;
 

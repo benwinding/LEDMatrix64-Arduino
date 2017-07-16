@@ -87,6 +87,7 @@ public:
     void off();
 
     void shiftMatrix();
+    void shiftMatrixLeft();
     void printCharInBuffer(int x, int y, int ch);
 
 private:

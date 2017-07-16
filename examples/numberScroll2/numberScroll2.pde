@@ -42,9 +42,9 @@ void AddNumberToPreBuffer() {
   if ((millis() - lastCountTime) > SCROLLDELAY * 6) {
     lastCountTime = millis();
     matrix.printCharInBuffer(0, 0, getCount(count, 0));
-    matrix.printCharInBuffer(0, 8, getCount(count, 3));
-    matrix.printCharInBuffer(0, 16, getCount(count, 6));
-    matrix.printCharInBuffer(0, 24, getCount(count, 9));
+    matrix.printCharInBuffer(0, 8, getCount(count, 1));
+    matrix.printCharInBuffer(0, 16, getCount(count, 2));
+    matrix.printCharInBuffer(0, 24, getCount(count, 3));
     count++;
   }
 }

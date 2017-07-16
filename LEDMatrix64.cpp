@@ -175,7 +175,7 @@ void LEDMatrix64::off()
 }
 
 
-// Shift matrix
+// Shift matrix right
 void LEDMatrix64::shiftMatrix() {
   int i,j;
   uint8_t previousByte;
@@ -185,14 +185,40 @@ void LEDMatrix64::shiftMatrix() {
     for(j=7; j>=0; j--) {
       int byteLocation = i*WIDTH/8 + j;
       if(j==0) {
-        previousByte = prebuf[i*PREWIDTH/8];
-        prebuf[i*PREWIDTH/8] = previousByte >> 1;
+        int preLocation = i*PREWIDTH/8;
+        previousByte = prebuf[preLocation];
+        prebuf[preLocation] = previousByte >> 1;
       }
       else {
         previousByte = displaybuf1[byteLocation-1];
       }
       currentByte = displaybuf1[byteLocation];
       displaybuf1[byteLocation] = (previousByte << 7) | (currentByte >> 1);
+    }
+  }
+}
+
+// Shift matrix left
+void LEDMatrix64::shiftMatrixLeft() {
+  int i,j;
+  int previousByte;
+  int currentByte;
+
+  Serial.begin(115200);
+
+  for(i=0; i<HEIGHT; i++) {
+    for(j=0; j<8; j++) {
+      int byteLocation = i*WIDTH/8 + j;
+      if(j==7) {
+        int preLocation = i*PREWIDTH/8;
+        previousByte = prebuf[preLocation];
+        prebuf[preLocation] = previousByte << 1;
+      }
+      else {
+        previousByte = displaybuf1[byteLocation+1];
+      }
+      currentByte = displaybuf1[byteLocation];
+      displaybuf1[byteLocation] = (previousByte >> 7) | (currentByte << 1);
     }
   }
 }
@@ -209,13 +235,15 @@ byte flipByte(byte c){
 
 void LEDMatrix64::printCharInBuffer(int x, int y, int ch) {
   int yy;
-  int8_t readByte;
+  uint8_t readByte;
+  uint8_t currentByte;
   uint8_t *pDst = prebuf + y * (PREWIDTH / 8) + x / 8;
   int fontSize = 7;
   for (yy=0; yy < fontSize; yy++)
   {
     readByte = pgm_read_byte(&font5x7[ch][yy]);
-    *pDst = readByte;
+    currentByte = *pDst;
+    *pDst = readByte | currentByte;
     pDst += PREWIDTH / 8;
   }
 }
